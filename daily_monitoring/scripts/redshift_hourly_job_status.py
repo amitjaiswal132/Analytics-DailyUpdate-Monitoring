@@ -66,7 +66,7 @@ def main():
     # just to make sure in case of kill also table_handlers are terminated properly and failure mail sent
     signal.signal(signal.SIGTERM, signal_term_handler)
     try:
-        redshift_table = options.redshift_table if options.redshift_table is not None else "user_sticker_activity"
+        redshift_table = options.redshift_table if options.redshift_table is not None else "hourly_complete_status"
         logger.info( redshift_table)
         dt_str=DatetimeUtils.cur_utc_time()
 

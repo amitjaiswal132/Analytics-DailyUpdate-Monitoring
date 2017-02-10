@@ -15,12 +15,12 @@ class ReportHandler:
         self.enabled = True
 
 def _generate_title(date_str, hour):
-        title_format = "v2:Redshift Upload %s %s-%s "
+        title_format = "v2:Redshift Upload %s %s-%s " % ("hourly_complete_status", date_str.strftime("%Y-%m-%d"), str(hour))
         title = (title_format % (ENV_PREFIX, date_str, str(hour)))
         return title
 
 
-def _generate_title(self, title_append):
+def _generate_title1(self, title_append):
     # v2:Daily Redshift Upload 2015-10-18 Start:8:00 AM Consumed: 150 m [Total:21 Waiting:2 Running:2 Success:17 Fail:0]
     title_format = "v2:%s Redshift Upload %s %s-%s Start:%s Consumed: %s [Total:%d Waiting:%d Running:%d Success:%d Fail:%d]"
     start = self.ist_start_time.strftime("%H:%M")
