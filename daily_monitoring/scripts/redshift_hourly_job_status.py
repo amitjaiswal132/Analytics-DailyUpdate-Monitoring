@@ -8,6 +8,9 @@ from analytics_common.utils.io_utils import IOUtils
 from analytics_common.utils.datetime_utils import DatetimeUtils
 from daily_monitoring.settings import *
 from daily_monitoring.handlers import ReportHandler
+from daily_monitoring.utils import Utils
+import yaml
+import requests
 
 
 def parse_arguments():
@@ -50,6 +53,15 @@ def main():
         #logger.error(msg)
         mail_additional_msg = additional_msg + "\n" + msg
 
+    def _json_response_handler(response):
+        response.raise_for_status()
+        # because json loads strings in unicode format whereas yaml safe_load in ASCII
+        return yaml.safe_load(response.content)
+
+    def job_completed_search(starts_with):
+        response = requests.get(HIVE_TO_REDSHIFT_JOB_COMPLETED_SEARCH_API_URL, params={'starts_with': starts_with})
+        return _json_response_handler(response)
+
     # set SIGTERM (on kill) signal handler
     # just to make sure in case of kill also table_handlers are terminated properly and failure mail sent
     signal.signal(signal.SIGTERM, signal_term_handler)
@@ -67,8 +79,8 @@ def main():
             date_str = dt_str - timedelta(hours=delta)
             check_dt_str = "%s" %(date_str.strftime("%Y-%m-%d-%H"))
             search_name = HIVE_TO_REDSHIFT_JOB_COMPLETED_NAME_FORMAT % (HIVE_TO_REDSHIFT_HOURLY_JOB_STATUS, check_dt_str)
-            print len(job_completed_search(search_name))
-            if len(job_completed_search(search_name)) == 0:
+            print len(Utils.job_completed_search(search_name))
+            if len(Utils.job_completed_search(search_name)) == 0:
                 content.append( "\n Hourly status check failed for date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour)))
 
         if len(content):
@@ -77,7 +89,7 @@ def main():
            IOUtils.write(file_path, content)
 
     except BaseException as e:
-        content = "Hourly status check failed date: s hour: s"
+        content = "Hourly status check failed date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour))
         print "Exception "+ str(content)
         day_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         file_path = NAGIOS_FILE_FORMAT % (day_str)
