@@ -84,17 +84,18 @@ def main():
                 content.append( "\n Hourly status check failed for date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour)))
 
         if len(content):
+           message = "Hourly status check failed date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour))
            day_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
            file_path = NAGIOS_FILE_FORMAT % (day_str)
-           IOUtils.write(file_path, content)
+           IOUtils.write(file_path, message)
 
     except BaseException as e:
-        content = "Hourly status check failed date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour))
-        logger.info( "Message %s "+ str(content))
-        logger.error("Exception %s " + str(e))
+        message = "Hourly status check failed date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour))
+        logger.info( "Message %s ", str(message))
+        logger.error("Exception %s " , str(e))
         day_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         file_path = NAGIOS_FILE_FORMAT % (day_str)
-        IOUtils.write(file_path, content)
+        IOUtils.write(file_path, message)
     finally:
        _finally_handler(title, content)
 
