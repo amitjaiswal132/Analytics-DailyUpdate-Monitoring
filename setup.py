@@ -30,7 +30,7 @@ setup(
     dependency_links = [
         "https://gdeploy:a13e8c8e9da9c0f06643146abd78ab1261934808@github.com/hike/Analytics-CommonUtilities/archive/master.zip#egg=Analytics-CommonUtilities-3.2.1"
     ],
-    scripts=['scripts/redshift_hourly_job_status.py'
+    scripts=['daily_monitoring/scripts/redshift_hourly_job_status.py'
              ],
     data_files=datafiles,
     zip_safe=False
