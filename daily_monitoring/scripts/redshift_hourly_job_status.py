@@ -70,7 +70,7 @@ def main():
         logger.info( redshift_table)
         dt_str=DatetimeUtils.cur_utc_time()
 
-        title = "v2:Redshift Upload hourly Status :  day : "
+        title = "v2:Redshift Upload hourly Status : %s day : %s " % (dt_str.strftime("%Y-%m-%d"), str(dt_str.hour))
         if options.day is not None and options.hour is not None:
             date_str = options.day if options.day is not None else str(DatetimeUtils.cur_utc_time().date())
             hour = options.hour if options.hour is not None else str(DatetimeUtils.cur_utc_time().hour)
