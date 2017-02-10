@@ -67,7 +67,7 @@ def main():
     signal.signal(signal.SIGTERM, signal_term_handler)
     try:
         redshift_table = options.redshift_table if options.redshift_table is not None else "user_sticker_activity"
-        print redshift_table
+        logger.info( redshift_table)
         dt_str=DatetimeUtils.cur_utc_time()
 
         title = "v2:Redshift Upload hourly Status :  day : "
@@ -79,8 +79,8 @@ def main():
             date_str = dt_str - timedelta(hours=delta)
             check_dt_str = "%s" %(date_str.strftime("%Y-%m-%d-%H"))
             search_name = HIVE_TO_REDSHIFT_JOB_COMPLETED_NAME_FORMAT % (HIVE_TO_REDSHIFT_HOURLY_JOB_STATUS, check_dt_str)
-            print len(Utils.job_completed_search(search_name))
-            if len(Utils.job_completed_search(search_name)) == 0:
+            logger.info( len(job_completed_search(search_name)))
+            if len(job_completed_search(search_name)) == 0:
                 content.append( "\n Hourly status check failed for date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour)))
 
         if len(content):
@@ -90,7 +90,8 @@ def main():
 
     except BaseException as e:
         content = "Hourly status check failed date: %s hour: %s" % (date_str.strftime("%Y-%m-%d"), str(date_str.hour))
-        print "Exception "+ str(content)
+        logger.info( "Message %s "+ str(content))
+        logger.error("Exception %s " + str(e))
         day_str = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         file_path = NAGIOS_FILE_FORMAT % (day_str)
         IOUtils.write(file_path, content)
@@ -99,9 +100,9 @@ def main():
 
 if __name__ == "__main__":
     IOUtils.create_file(LOG_FILEPATH)
-    print LOG_FILEPATH
-    print LOG_CONFIG
     logging.config.fileConfig(LOG_CONFIG, disable_existing_loggers=False)
     logger = logging.getLogger(__name__)
     logger.info("LOG_FILEPATH: %s", LOG_FILEPATH)
+    logger.info("LOG_FILEPATH : %s", LOG_FILEPATH)
+    logger.info("LOG_CONFIG : %s", LOG_CONFIG)
     main()
